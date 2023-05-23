@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class AppService {
-  apiUrl = `https://jsonplaceholder.typicode.com/todos/`;
+  apiUrl = `https://jsonplaceholder.typicode.com/todos`;
   
   constructor(private readonly httpService: HttpService) { }
 
@@ -24,7 +24,7 @@ export class AppService {
 
   async getTodoById(id: number): Promise<Todo | undefined> {
     try {
-      const response: AxiosResponse<Todo> = await this.httpService.get(`${this.apiUrl}${id}`).toPromise();
+      const response: AxiosResponse<Todo> = await this.httpService.get(`${this.apiUrl}/${id}`).toPromise();
       return response.data;
     } catch (error) {
       // Handle error appropriately
