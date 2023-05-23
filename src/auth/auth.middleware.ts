@@ -1,11 +1,10 @@
-// auth.middleware.ts
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { env } from 'process';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
+    
     // Skip authorization for the Swagger UI route
     if (req.url.startsWith('/api')) {
       next();
