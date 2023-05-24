@@ -1,24 +1,46 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { AppService } from './app.service';
 import { Todo } from './interfaces/todo.interface';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @Controller('api')
+@ApiTags('Todos endpoints')
 @ApiBearerAuth()
 export class AppController {
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService) {}
 
-  @Get('hello')
+  @Get('helloTodo')
+  @ApiOkResponse({ description: 'Successful Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   getHello(): string {
-    return this.appService.getHello();
+    return this.appService.getHelloTodo();
   }
 
-  @Get('getAllTodos')
+  @Get('getTodos')
+  @ApiOkResponse({ description: 'Successful Request' })
+  @ApiNotFoundResponse({ description: 'Not Found Request' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async getAllTodos(): Promise<Todo[]> {
     return await this.appService.getAllTodos();
   }
 
   @Get('getTodo/:id')
+  @ApiOkResponse({ description: 'Successful Request' })
+  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async getTodoById(@Param('id') id: string): Promise<Todo | undefined> {
     return await this.appService.getTodoById(parseInt(id, 10));
   }
