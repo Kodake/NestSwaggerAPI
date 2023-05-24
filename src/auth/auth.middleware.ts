@@ -17,8 +17,6 @@ export class AuthMiddleware implements NestMiddleware {
       const token = authHeader.split(' ')[1];
 
       if (token === process.env.TOKEN) {
-        console.log(token);
-
         // Authorized
         next();
         return;
