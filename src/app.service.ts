@@ -12,7 +12,7 @@ import { AxiosResponse } from 'axios';
 export class AppService {
   apiUrl = `https://jsonplaceholder.typicode.com/todos`;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) { }
 
   getHelloTodo(): string {
     try {
@@ -25,7 +25,7 @@ export class AppService {
     }
   }
 
-  async getAll(): Promise<Todo[]> {
+  async getAll(): Promise<{ statusCode: number, data: Todo[] }> {
     try {
       const response: AxiosResponse<Todo[]> = await this.httpService
         .get(this.apiUrl)
@@ -38,7 +38,10 @@ export class AppService {
         });
       }
 
-      return response.data;
+      return {
+        statusCode: 200,
+        data: response.data,
+      };
     } catch (error) {
       throw new InternalServerErrorException({
         statusCode: 500,
@@ -47,7 +50,7 @@ export class AppService {
     }
   }
 
-  async getTodo(id: number): Promise<Todo | undefined> {
+  async getTodo(id: number): Promise<{ statusCode: number, data: Todo | undefined }> {
     try {
       const response: AxiosResponse<Todo> = await this.httpService
         .get(`${this.apiUrl}/${id}`)
@@ -67,7 +70,10 @@ export class AppService {
         });
       }
 
-      return response.data;
+      return {
+        statusCode: 200,
+        data: response.data,
+      };
     } catch (error) {
       throw new InternalServerErrorException({
         statusCode: 500,

@@ -25,25 +25,28 @@ import {
 @ApiTags('Todos')
 @ApiBearerAuth()
 export class AppController {
-  constructor(private appService: AppService) {}
+  constructor(private appService: AppService) { }
 
   @ApiExtraModels(Todos)
+  @HttpCode(200)
   @Get('getAll')
   @ApiOkResponse({ description: 'Successful Request' })
   @ApiNotFoundResponse({ description: 'Not Found Request' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  async all(): Promise<Todo[]> {
+  async all(): Promise<{ statusCode: number; data: Todo[] }> {
     return await this.appService.getAll();
   }
 
+  @ApiExtraModels(Todos)
+  @HttpCode(200)
   @Get(':id')
   @ApiOkResponse({ description: 'Successful Request' })
   @ApiBadRequestResponse({ description: 'Bad Request' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  async get(@Param('id') id: string): Promise<Todo | undefined> {
+  async get(@Param('id') id: string): Promise<{statusCode: number, data: Todo | undefined}> {
     return await this.appService.getTodo(parseInt(id, 10));
   }
 
@@ -54,11 +57,9 @@ export class AppController {
   @ApiUnauthorizedResponse({ description: 'Unauthorized Request' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async post(
-    @Param('userId') userId: number,
-    @Param('title') title: string,
-    @Param('completed') completed: boolean,
-  ): Promise<{ statusCode: number; message: string; data: TodoDTO }> {
-    return await this.appService.createTodo(userId, title, completed);
+    @Body() todo: TodoDTO
+  ): Promise<{ statusCode: number; message: string; data: TodoDTO }> {    
+    return await this.appService.createTodo(todo.userId, todo.title, todo.completed);
   }
 
   @Put(':id')
@@ -69,18 +70,9 @@ export class AppController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async update(
     @Param('id') id: number,
-    @Body('userId') userId: number,
-    @Body('title') title: string,
-    @Body('completed') completed: boolean,
-  ): Promise<{ statusCode: number; message: string; data: Todo }> {
-    var updatedTodo = {
-      id,
-      userId,
-      title,
-      completed,
-    };
-
-    return await this.appService.updateTodo(id, userId, title, completed);
+    @Body() updTodo: TodoDTO
+  ): Promise<{ statusCode: number; message: string; data: TodoDTO }> {
+    return await this.appService.updateTodo(id, updTodo.userId, updTodo.title, updTodo.completed);
   }
 
   @Delete(':id')
